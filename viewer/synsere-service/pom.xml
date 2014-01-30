@@ -1,0 +1,29 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>com.synsere</groupId>
+		<artifactId>synsere-parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+	</parent>
+	<artifactId>synsere-service</artifactId>
+
+	<dependencies>
+		<dependency>
+			<groupId>com.twitter.common</groupId>
+			<artifactId>application</artifactId>
+			<version>0.0.50</version>
+		</dependency>
+		<dependency>
+			<groupId>commons-daemon</groupId>
+			<artifactId>commons-daemon</artifactId>
+			<version>1.0.15</version>
+		</dependency>
+		<dependency>
+			<groupId>com.synsere</groupId>
+			<artifactId>synsere-jndi-modules</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+</project>

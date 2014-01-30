@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org" lang="en">
+<wicket:head>
+
+</wicket:head>
+<body>
+	<wicket:extend>
+		<div class="page-header">
+			<h1>Memento Viewer</h1>
+		</div>
+
+        <div class="row">
+            <div class="offset4 span4 well">
+                <form wicket:id="form">
+                    <fieldset>
+                        <div id="legend">
+                            <legend class="">Login</legend>
+                        </div>
+                        <input wicket:id="name" type="text" class="span4 form-control" placeholder="Username" autofocus>
+                        <input wicket:id="password" type="password" class="span4 form-control" placeholder="Password">
+                        <button wicket:id="submit" class="btn btn-success" type="submit">Sign in</button>
+                    </fieldset>
+                </form>
+            </div>
+        </div>
+	</wicket:extend>
+</body>
+</html>

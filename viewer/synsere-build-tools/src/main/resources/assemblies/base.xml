@@ -1,0 +1,92 @@
+<component>
+
+	<dependencySets>
+		<!-- all dependencies, excluding build tools -->
+		<dependencySet>
+			<outputDirectory>/lib/</outputDirectory>
+			<useProjectArtifact>false</useProjectArtifact>
+			<unpack>false</unpack>
+			<scope>runtime</scope>
+			<excludes>
+				<exclude>com.synsere:synsere-build-tools</exclude>
+			</excludes>
+		</dependencySet>
+		<!-- and the build tools -->
+		<dependencySet>
+			<unpack>true</unpack>
+			<useProjectArtifact>false</useProjectArtifact>
+			<outputFileNameMapping>/</outputFileNameMapping>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>com.synsere:synsere-build-tools</include>
+			</includes>
+			<unpackOptions>
+				<includes>
+					<include>logback.xml</include>
+					<include>service.sh</include>
+				</includes>
+				<filtered>true</filtered>
+			</unpackOptions>
+			<useTransitiveDependencies>false</useTransitiveDependencies>
+		</dependencySet>
+	</dependencySets>
+
+	<fileSets>
+		<!-- all scripts -->
+		<fileSet>
+			<directory>${project.build.scriptSourceDirectory}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+			<filtered>true</filtered>
+		</fileSet>
+		<!-- empty log folder -->
+		<fileSet>
+			<directory>${basedir}</directory>
+			<outputDirectory>/log</outputDirectory>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
+		<!-- basic config from resources -->
+		<fileSet>
+			<directory>${basedir}/src/main/resources</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>config.js</include>
+			</includes>
+			<filtered>false</filtered>
+		</fileSet>
+		<!-- Not sure what to do here -->
+		<fileSet>
+			<directory>src/main/web</directory>
+			<outputDirectory>/external</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/lib/binaries</directory>
+			<outputDirectory>/binaries</outputDirectory>
+			<includes>
+				<include>**/*</include>
+			</includes>
+		</fileSet>
+		<fileSet>
+			<directory>${basedir}/var</directory>
+			<outputDirectory>/var</outputDirectory>
+			<excludes>
+				<exclude>**/*</exclude>
+			</excludes>
+		</fileSet>
+		<!-- Final artifact -->
+		<fileSet>
+			<directory>${project.build.directory}</directory>
+			<outputDirectory>/</outputDirectory>
+			<includes>
+				<include>${project.artifactId}-${project.version}.jar</include>
+			</includes>
+		</fileSet>
+	</fileSets>
+</component>
