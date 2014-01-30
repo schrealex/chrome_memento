@@ -11,7 +11,7 @@ public class BasePage extends WebPage
 	/** */
 	private static final long serialVersionUID = 1L;
 
-	private FeedbackPanel feedback;
+	private final FeedbackPanel feedback;
 
 	public BasePage()
 	{
@@ -27,9 +27,10 @@ public class BasePage extends WebPage
 		return feedback;
 	}
 
-    @Override
-    public void renderHead(IHeaderResponse response) {
-        super.renderHead(response);
-        Bootstrap.renderHead(response);
-    }
+	@Override
+	public void renderHead(final IHeaderResponse response)
+	{
+		super.renderHead(response);
+		Bootstrap.renderHead(response);
+	}
 }

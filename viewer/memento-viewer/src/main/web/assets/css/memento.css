@@ -1,0 +1,25 @@
+.files {
+ 	width: 25%; 
+ 	height: 500px; 
+ 	float: left;
+ }
+ 
+ .wrapper {
+ 	width: 50%; 
+ 	height: 100%; 
+ 	float: left;
+ }
+
+ .meta { 
+ 	height: 20%; 
+ }
+
+.video{
+	height: 80%; 
+}
+
+.comments {
+ 	width: 25%; 
+ 	height: 500px; 
+ 	float: left;
+ } 	 

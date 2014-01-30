@@ -267,6 +267,11 @@
 			<version>${wicket.version}</version>
 		</dependency>
 		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-html5</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>org.apache.wicket</groupId>
 			<artifactId>wicket-extensions</artifactId>
 			<version>${wicket.version}</version>
@@ -379,6 +384,7 @@
 				<property>
 					<name>m2e.version</name>
 				</property>
+				<activeByDefault>true</activeByDefault>
 			</activation>
 			<properties>
 				<web.root>${basedir}/src/main/web</web.root>
