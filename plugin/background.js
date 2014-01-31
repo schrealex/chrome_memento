@@ -12,16 +12,21 @@
   var extensionId = chrome.i18n.getMessage("@@extension_id");
 
   // 220MiB top (write first, remove later, 3 bufs of 25 frames (~75 frames =~= 8s)
-  var bufSize = 50;
+  var bufSize = 600;
   var shortBufSize = 25;
+
   var segments = [];
+  var segmentDimensions = [];
+
   var segmentId = 0;
-  var lockedFrames = [];
+  
+  var isLocked = false;
 
   var sessionId = 0;
   var recordingId = 0;
   var activeTabId = null;
   var buf = [];
+  var segmentDimension = { width : 0, height : 0};
 
   /*
    * Window promise (in : id, out : window)
@@ -176,11 +181,13 @@
             return capture()
             .then(function(data)
             {
-              if(data && state)
+              if(data && state && !isLocked)
               {
+                console.log('storing frame!');
                 if(segments.length > bufSize / shortBufSize)
                 {
                   var id = segments.shift();
+                  segmentDimensions.shift();
                   chrome.storage.local.remove(id);
                 }
   
@@ -191,8 +198,6 @@
                   left    : window.left,
                   width   : window.width,
                   height  : window.height,
-                  scrollX : window.scrollX,
-                  scrollY : window.scrollY,
                   mouseX  : state.mouseX,
                   mouseY  : state.mouseY,
                   screenX : state.screenX,
@@ -204,6 +209,9 @@
                 };
   
                 buf.push(obj);
+
+                segmentDimension.width = Math.max(obj.width, segmentDimension.width);
+                segmentDimension.height = Math.max(obj.height, segmentDimension.height);
   
                 if(buf.length == shortBufSize)
                 {
@@ -212,13 +220,16 @@
                   data[id] = buf;
   
                   segments.push(id);
+                  segmentDimensions.push(segmentDimension);
+
                   chrome.storage.local.set(data, function()
                   {
-  
+                    console.log('stored data in local storage');
                   });
   
                   segmentId++;
                   buf = [];
+                  segmentDimension = {width : 0, height : 0};
                 }
               }
   
@@ -262,41 +273,74 @@
 
     var type = message.type;
 
-    if(type === 'lock')
+    if (type === 'size') {
+
+      var width = segmentDimension.width;
+      var height = segmentDimension.height;
+
+      for(var i = 0; i < segmentDimensions.length; i++)
+      {
+        var width = Math.max(width, segmentDimensions[i].width);
+        var height = Math.max(height, segmentDimensions[i].height);
+      }
+      
+      sendResponse({width: width, height:height});
+    }
+    
+    if(type === 'segments')
     {
-      var key = 'record-' + recordingId;
-      recordingId++;
-
-      var data = {};
-      data[key] = buf;
-
       var popupSegments = [];
 
       segments.forEach(function(segment)
       {
         popupSegments.push(segment);
       });
+      
+      popupSegments.push(segmentId);
 
-      lockedSegments.push(popupSegments);
+      //lockedSegments.push(popupSegments);
 
-      sendResponse(popupSegments);
+      sendResponse({ 'segments' : popupSegments } );
 
       return true;
     }
 
     if(type === 'fetch')
     {
+      console.log('executing fetch');
+      var id = message.segmentId;
+      
+      if (id === segmentId) {
+        console.log('should send latest segment');
+        sendResponse(buf);
+        return;
+      }
+      
+      console.log('sending id', id);
+      chrome.storage.local.get('' + id, function(segment)
+      {
+        
+        console.log('should send segment', segment);
+        sendResponse(segment[''+id]);
+      });
+      return true;
       // fetch and return the frame
       
     }
-
-    if(type === 'unlock')
-    {
-
-    }
-
   });
 
+  /*
+   * Invoked when popup opens and closes
+   */
+  chrome.runtime.onConnect.addListener(function(port)
+  {
+    isLocked = true;
+    
+    port.onDisconnect.addListener(function() {
+      isLocked = false;
+    });
+  });
+  
   /*
    * Kicker for window modifications
    */
