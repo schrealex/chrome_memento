@@ -1,6 +1,10 @@
 package nl.topicus.memento.videoservice;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 import nl.topicus.memento.db.Tables;
 
@@ -44,8 +48,9 @@ public class VideoService
 	{
 		DSLContext context = contextProvider.get();
 		context.insertInto(Tables.VIDEO).set(Tables.VIDEO.FILENAME, fileName)
-			.set(Tables.VIDEO.VIDEONAME, fileDetail.getName()).set(Tables.VIDEO.MAPLOCATION, "../assets/var")
-			.set(Tables.VIDEO.LENGTH, 1000).set(Tables.VIDEO.BROWSERTYPE, "Chrome").execute();
+			.set(Tables.VIDEO.VIDEONAME, fileDetail.getName())
+			.set(Tables.VIDEO.MAPLOCATION, getStorageFolder().getPath()).set(Tables.VIDEO.LENGTH, 1000)
+			.set(Tables.VIDEO.BROWSERTYPE, "Chrome").execute();
 
 	}
 
