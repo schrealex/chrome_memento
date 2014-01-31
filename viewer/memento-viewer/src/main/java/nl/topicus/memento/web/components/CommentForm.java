@@ -5,6 +5,7 @@ import java.util.Date;
 import nl.topicus.memento.db.Tables;
 import nl.topicus.memento.db.tables.records.CommentRecord;
 
+import org.apache.shiro.SecurityUtils;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -37,14 +38,19 @@ public class CommentForm extends Form<CommentRecord>
 	public final void onSubmit()
 	{
 		// Construct a copy of the edited comment
-		final CommentRecord comment = getModelObject();
-		final CommentRecord newComment = new CommentRecord(null, 1, new Date().toString(), "1", getModelObject()
-			.getComment());
+		final String username = SecurityUtils.getSubject().getSession().getAttribute("username").toString();
 
-		// Add the component we edited to the list of comments
-		context.insertInto(Tables.COMMENT).set(newComment).execute();
+		if (false)
+		{
+			final CommentRecord comment = getModelObject();
+			final CommentRecord newComment = new CommentRecord(null, 1, new Date().toString(), username,
+				getModelObject().getComment());
 
-		// Clear out the text component
-		comment.setComment("");
+			// Add the component we edited to the list of comments
+			context.insertInto(Tables.COMMENT).set(newComment).execute();
+
+			// Clear out the text component
+			comment.setComment("");
+		}
 	}
 }

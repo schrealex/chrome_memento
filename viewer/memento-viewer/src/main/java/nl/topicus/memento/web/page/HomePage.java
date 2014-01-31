@@ -6,21 +6,29 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import nl.topicus.memento.db.tables.records.CommentRecord;
 import nl.topicus.memento.videoservice.VideoService;
 import nl.topicus.memento.web.components.CommentForm;
 import nl.topicus.memento.web.components.FileTreeProvider;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.shiro.SecurityUtils;
 import org.apache.wicket.Component;
 import org.apache.wicket.ajax.AjaxRequestTarget;
 import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
 import org.apache.wicket.extensions.markup.html.repeater.tree.theme.WindowsTheme;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
+import org.apache.wicket.markup.html.basic.MultiLineLabel;
+import org.apache.wicket.markup.html.list.ListItem;
+import org.apache.wicket.markup.html.list.ListView;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
 import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.jooq.DSLContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wicketstuff.html5.media.MediaSource;
@@ -29,6 +37,7 @@ import org.wicketstuff.shiro.ShiroConstraint;
 import org.wicketstuff.shiro.annotation.ShiroSecurityConstraint;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 @ShiroSecurityConstraint(constraint = ShiroConstraint.IsAuthenticated)
 public class HomePage extends BasePage
@@ -40,14 +49,49 @@ public class HomePage extends BasePage
 	@Inject
 	private VideoService videoService;
 
+	/** Container for the comments, used to update the listview. */
+	private final WebMarkupContainer comments;
+
+	/** A global list of all comments from all users across all sessions */
+	public static final List<CommentRecord> commentList = new ArrayList<CommentRecord>();
+
+	/** The list view that shows comments */
+	private final ListView<CommentRecord> commentListView;
+
+	@Inject
+	private Provider<DSLContext> contextProvider;
+
+	DSLContext context;
+
 	public HomePage()
 	{
+		context = contextProvider.get();
+
 		addMetaData();
 		addVideo();
 		addFilesTree();
 
 		final CommentForm commentForm = new CommentForm("commentForm");
 		add(commentForm);
+
+		comments = new WebMarkupContainer("comments");
+		add(comments.setOutputMarkupId(true));
+
+		// commentList = context.select(Tables.COMMENT.FK_VIDEO_ID).where("1").execute();
+		// commentList.add(new CommentRecord(1, 1, "31-01-2014", "admin", "Dit is een comment!"));
+
+		// Add commentListView of existing comments
+		comments.add(commentListView = new ListView<CommentRecord>("comments", new PropertyModel<List<CommentRecord>>(
+			this, "commentList"))
+		{
+			@Override
+			public void populateItem(final ListItem<CommentRecord> listItem)
+			{
+				final CommentRecord comment = listItem.getModelObject();
+				listItem.add(new Label("date", comment.getDatetime()));
+				listItem.add(new MultiLineLabel("text", comment.getComment()));
+			}
+		});
 	}
 
 	public void addMetaData()
@@ -127,6 +171,7 @@ public class HomePage extends BasePage
 							final VideoFile videoFile = new VideoFile();
 							videoFile.setFilename(file.getAbsolutePath());
 							LOG.info(videoFile.getFilename());
+							SecurityUtils.getSubject().getSession().setAttribute("video", videoFile.getFilename());
 						}
 					}
 				};
