@@ -16,11 +16,11 @@
         <sql>
         	CREATE TABLE video (
         		id INTEGER PRIMARY KEY,
-        		filename TEXT,
-        		videoname TEXT,
-        		maplocation TEXT,
-        		length INTEGER,
-        		browsertype TEXT
+        		filename TEXT NOT NULL UNIQUE,
+        		videoname TEXT NOT NULL,
+        		maplocation TEXT NOT NULL,
+        		length INTEGER NOT NULL,
+        		browsertype TEXT NOT NULL
         	);
         </sql>
     </changeSet>
@@ -35,9 +35,9 @@
         <sql>
         	CREATE TABLE frame_metadata (
         		id INTEGER PRIMARY KEY,
-        		fk_video_id INTEGER,
-        		start_datetime TEXT,
-        		url TEXT,
+        		fk_video_id INTEGER NOT NULL,
+        		start_datetime TEXT NOT NULL,
+        		url TEXT NOT NULL,
         		FOREIGN KEY(fk_video_id) REFERENCES video(id)
         	);
         </sql>
@@ -54,10 +54,10 @@
         <sql>
         	CREATE TABLE comment (
         		id INTEGER PRIMARY KEY,
-        		fk_video_id INTEGER,
-        		datetime TEXT,
-        		username TEXT,
-        		comment TEXT,
+        		fk_video_id INTEGER NOT NULL,
+        		datetime TEXT NOT NULL,
+        		username TEXT NOT NULL,
+        		comment TEXT NOT NULL,
         		FOREIGN KEY(fk_video_id) REFERENCES video(id)
         	);
         </sql>
