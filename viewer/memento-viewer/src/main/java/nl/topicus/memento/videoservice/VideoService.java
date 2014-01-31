@@ -1,5 +1,6 @@
 package nl.topicus.memento.videoservice;
 
+
 import java.io.*;
 
 import nl.topicus.memento.db.Tables;
@@ -12,6 +13,8 @@ import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
+import java.io.File;
+
 @Singleton
 public class VideoService
 {
@@ -21,6 +24,24 @@ public class VideoService
 	@Inject
 	@Named("storage.folder")
 	private File storageFolder;
+
+	public File getStorageFolder()
+	{
+		return storageFolder;
+	}
+
+	public String getVideoName(final String UUID)
+	{
+		if (UUID.contains(".mp4"))
+		{
+			return "video " + UUID;
+		}
+		else
+		{
+			return UUID;
+		}
+
+	}
 
 	public void saveToDatabase(InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
 	{
