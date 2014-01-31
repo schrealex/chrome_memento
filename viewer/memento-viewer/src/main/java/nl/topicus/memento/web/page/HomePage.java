@@ -105,7 +105,7 @@ public class HomePage extends BasePage
 							return true;
 						}
 
-						if (file.getName().endsWith(".mp4"))
+						if (file.getName().endsWith(".webM"))
 						{
 							return true;
 						}

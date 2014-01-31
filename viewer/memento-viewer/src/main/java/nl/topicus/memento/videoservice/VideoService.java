@@ -1,6 +1,5 @@
 package nl.topicus.memento.videoservice;
 
-
 import java.io.*;
 
 import nl.topicus.memento.db.Tables;
@@ -12,8 +11,6 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 import com.sun.jersey.core.header.FormDataContentDisposition;
-
-import java.io.File;
 
 @Singleton
 public class VideoService
@@ -32,7 +29,7 @@ public class VideoService
 
 	public String getVideoName(final String UUID)
 	{
-		if (UUID.contains(".mp4"))
+		if (UUID.contains(".webM"))
 		{
 			return "video " + UUID;
 		}
@@ -43,19 +40,18 @@ public class VideoService
 
 	}
 
-	public void saveToDatabase(InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+	public void saveToDatabase(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, String fileName)
 	{
 		DSLContext context = contextProvider.get();
-		context.insertInto(Tables.VIDEO).set(Tables.VIDEO.FILENAME, fileDetail.getFileName())
+		context.insertInto(Tables.VIDEO).set(Tables.VIDEO.FILENAME, fileName)
 			.set(Tables.VIDEO.VIDEONAME, fileDetail.getName()).set(Tables.VIDEO.MAPLOCATION, "../assets/var")
 			.set(Tables.VIDEO.LENGTH, 1000).set(Tables.VIDEO.BROWSERTYPE, "Chrome").execute();
 
 	}
 
-	public void saveToStorage(InputStream uploadedInputStream, FormDataContentDisposition fileDetail)
+	public void saveToStorage(InputStream uploadedInputStream, FormDataContentDisposition fileDetail, String fileName)
 	{
-		String filelocation = fileDetail.getFileName();
-		writeToFile(uploadedInputStream, filelocation);
+		writeToFile(uploadedInputStream, fileName);
 	}
 
 	// save uploaded file to new location

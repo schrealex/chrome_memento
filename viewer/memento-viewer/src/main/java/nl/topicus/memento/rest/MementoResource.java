@@ -1,6 +1,7 @@
 package nl.topicus.memento.rest;
 
 import java.io.InputStream;
+import java.util.UUID;
 
 import javax.inject.Singleton;
 import javax.ws.rs.Consumes;
@@ -35,8 +36,9 @@ public class MementoResource
 
 	{
 		String fileLocation = "Users/ilsantijhuis/workspaceDJDD/output/" + fileDetail.getFileName();
-		// videoService.saveToDatabase(uploadedInputStream, fileDetail);
-		videoService.saveToStorage(uploadedInputStream, fileDetail);
+		String fileName = UUID.randomUUID().toString() + fileDetail.getFileName();
+		 videoService.saveToDatabase(uploadedInputStream, fileDetail,fileName);
+		videoService.saveToStorage(uploadedInputStream, fileDetail,fileName);
 
 		// context.insertInto(Tables.VIDEO).set(Tables.VIDEO.ID, "videovalueid").execute();
 		return "OK";
