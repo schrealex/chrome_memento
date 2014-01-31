@@ -1,35 +1,36 @@
 <wicket:extend>
-	<div class="page-header">
-		<h1>Memento Viewer</h1>
-		<p class="lead">Manage your Memento Movies here!</p>
+	<div class="header">
+		<img class="logo" src="assets\images\memento-logo_small.png">
+		<p class="text">Manage your Memento Movies here!</p>
 	</div>
 	<div class="files" wicket:id="files">FILES</div>
 	<div class="wrapper" id="wrapper">
 		<div class="meta" id="meta">
 	    	<label wicket:id="metaData">META</label>
-			<hr>
 		</div>
 		<div class="video">
 			<video width="100%" wicket:id="videoplayer"></video>
 		</div>
+		
+		<div class="comments">
+			<label>COMMENTS</label>
+			<wicket:panel>
+				<form wicket:id="commentForm">
+					Add your comment here:
+					<textarea wicket:id = "comment">This is a comment</textarea>
+					<p/>
+					<input type = "submit" value = "Submit"/>
+				</form>
+				<div wicket:id="comments">
+					<span wicket:id="comments">
+					    <p>
+					        <span wicket:id = "date">1/1/2004</span><br />
+					        <span wicket:id = "text">Comment text goes here.</span>
+					    </p>
+					</span>
+				</div>
+			</wicket:panel>
+		</div>
 	</div>
-	<div class="comments">
-		<label>COMMENTS</label>
-		<wicket:panel>
-			<form wicket:id="commentForm">
-				Add your comment here:
-				<textarea wicket:id = "comment">This is a comment</textarea>
-				<p/>
-				<input type = "submit" value = "Submit"/>
-			</form>
-			<div wicket:id="comments">
-				<span wicket:id="comments">
-				    <p>
-				        <span wicket:id = "date">1/1/2004</span><br />
-				        <span wicket:id = "text">Comment text goes here.</span>
-				    </p>
-				</span>
-			</div>
-		</wicket:panel>
-	</div>
+	
 </wicket:extend>

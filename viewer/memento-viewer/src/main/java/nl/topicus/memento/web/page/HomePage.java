@@ -2,7 +2,9 @@ package nl.topicus.memento.web.page;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -84,6 +86,8 @@ public class HomePage extends BasePage
 		comments.add(commentListView = new ListView<CommentRecord>("comments", new PropertyModel<List<CommentRecord>>(
 			this, "commentList"))
 		{
+			private static final long serialVersionUID = 1L;
+
 			@Override
 			public void populateItem(final ListItem<CommentRecord> listItem)
 			{
@@ -97,10 +101,17 @@ public class HomePage extends BasePage
 	public void addMetaData()
 	{
 		final StringBuilder metaBuilder = new StringBuilder();
-		metaBuilder.append("MetaData");
+		metaBuilder.append("Publish date: ");
+
+		Date today = Calendar.getInstance().getTime();
+		metaBuilder.append(today.toString());
+
+		metaBuilder.append("\n");
+		metaBuilder.append("URL: ");
+		metaBuilder.append("http://www.topicuszorg.nl");
 
 		// final Label metaData = new Label("metaData", videofile.getMetaDataAsString());
-		final Label metaData = new Label("metaData", metaBuilder.toString());
+		final MultiLineLabel metaData = new MultiLineLabel("metaData", metaBuilder.toString());
 		add(metaData);
 	}
 

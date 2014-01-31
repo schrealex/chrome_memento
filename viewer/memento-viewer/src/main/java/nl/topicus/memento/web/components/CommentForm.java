@@ -6,6 +6,7 @@ import nl.topicus.memento.db.Tables;
 import nl.topicus.memento.db.tables.records.CommentRecord;
 
 import org.apache.shiro.SecurityUtils;
+import org.apache.wicket.behavior.AttributeAppender;
 import org.apache.wicket.markup.html.form.Form;
 import org.apache.wicket.markup.html.form.TextArea;
 import org.apache.wicket.model.CompoundPropertyModel;
@@ -30,6 +31,7 @@ public class CommentForm extends Form<CommentRecord>
 		context = contextProvider.get();
 
 		final TextArea<String> text = new TextArea<String>("comment");
+		text.add(new AttributeAppender("class", "comment"));
 		text.setOutputMarkupId(true);
 		add(text);
 	}
