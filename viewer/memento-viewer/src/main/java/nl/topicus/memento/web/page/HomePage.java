@@ -1,10 +1,7 @@
 package nl.topicus.memento.web.page;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 import nl.topicus.memento.videoservice.VideoService;
 import nl.topicus.memento.web.components.CommentForm;
@@ -17,6 +14,7 @@ import org.apache.wicket.extensions.markup.html.repeater.tree.ITreeProvider;
 import org.apache.wicket.extensions.markup.html.repeater.tree.NestedTree;
 import org.apache.wicket.extensions.markup.html.repeater.tree.content.Folder;
 import org.apache.wicket.extensions.markup.html.repeater.tree.theme.WindowsTheme;
+import org.apache.wicket.markup.html.WebMarkupContainer;
 import org.apache.wicket.markup.html.basic.Label;
 import org.apache.wicket.model.AbstractReadOnlyModel;
 import org.apache.wicket.model.IModel;
@@ -40,13 +38,28 @@ public class HomePage extends BasePage
 	@Inject
 	private VideoService videoService;
 
+	private Html5Video video;
+
+	private IModel<File> videoFileModel = new Model<>();
+
+	private WebMarkupContainer videoContainer;
+
 	public HomePage()
 	{
+
+	}
+
+	@Override
+	protected void onInitialize()
+	{
+		super.onInitialize();
+
 		addMetaData();
 		addVideo();
 		addFilesTree();
 
 		final CommentForm commentForm = new CommentForm("commentForm");
+
 		add(commentForm);
 	}
 
@@ -62,7 +75,7 @@ public class HomePage extends BasePage
 
 	public void addVideo()
 	{
-		add(new Html5Video("videoplayer", getMediaSourceList())
+		video = new Html5Video("videoplayer", getMediaSourceList())
 		{
 
 			private static final long serialVersionUID = 1L;
@@ -73,12 +86,20 @@ public class HomePage extends BasePage
 				return true;
 			}
 
-		});
+		};
+
+		videoContainer = new WebMarkupContainer("container");
+		videoContainer.setOutputMarkupPlaceholderTag(true);
+
+		videoContainer.add(video);
+
+		add(videoContainer);
 	}
 
 	public void addFilesTree()
 	{
 		final ITreeProvider<File> treeProvider = createTreeProvider();
+
 		final NestedTree<File> files = new NestedTree<File>("files", treeProvider)
 		{
 			private static final long serialVersionUID = 1L;
@@ -105,7 +126,7 @@ public class HomePage extends BasePage
 							return true;
 						}
 
-						if (file.getName().endsWith(".webM"))
+						if (file.getName().endsWith(".webM") || file.getName().endsWith(".mp4"))
 						{
 							return true;
 						}
@@ -124,9 +145,8 @@ public class HomePage extends BasePage
 						}
 						else
 						{
-							final VideoFile videoFile = new VideoFile();
-							videoFile.setFilename(file.getAbsolutePath());
-							LOG.info(videoFile.getFilename());
+							videoFileModel.setObject(file);
+							target.add(videoContainer);
 						}
 					}
 				};
@@ -146,20 +166,19 @@ public class HomePage extends BasePage
 
 	public IModel<List<MediaSource>> getMediaSourceList()
 	{
-		final List<MediaSource> mediaSource = new ArrayList<MediaSource>();
-		mediaSource.add(new MediaSource(StringEscapeUtils.escapeJavaScript("/var/sample_mpeg4.mp4"), "video/mp4"));
-
-		final IModel<List<MediaSource>> mediaSourceList = new AbstractReadOnlyModel<List<MediaSource>>()
+		return new AbstractReadOnlyModel<List<MediaSource>>()
 		{
-			private static final long serialVersionUID = 1L;
-
 			@Override
 			public List<MediaSource> getObject()
 			{
-				return mediaSource;
+				if(videoFileModel.getObject() != null)
+				{
+					MediaSource source = new MediaSource("video/"+videoFileModel.getObject().getName(), "video/webp");
+					return Arrays.asList(source);
+				}
+				return Collections.emptyList();
 			}
 		};
-		return mediaSourceList;
 	}
 
 	private ITreeProvider<File> createTreeProvider()
