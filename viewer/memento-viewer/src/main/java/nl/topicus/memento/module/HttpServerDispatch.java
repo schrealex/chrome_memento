@@ -1,11 +1,11 @@
 package nl.topicus.memento.module;
 
-import nl.topicus.memento.http.InvalidRequestServlet;
-
 import java.net.InetSocketAddress;
 import java.util.EnumSet;
 
 import javax.servlet.DispatcherType;
+
+import nl.topicus.memento.http.InvalidRequestServlet;
 
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.session.SessionHandler;
@@ -33,15 +33,15 @@ public class HttpServerDispatch
 	/**
 	 * Opens the HTTP server on the given port.
 	 * 
-	 * @param port The port to listen on.
-	 * @return {@code true} if the server started successfully on the port,
-	 *         {@code false} otherwise.
+	 * @param port
+	 *            The port to listen on.
+	 * @return {@code true} if the server started successfully on the port, {@code false} otherwise.
 	 */
 	public synchronized boolean listen(int port)
 	{
 		Preconditions.checkState(!isStarted(), "HttpServerDispatch has already been started on port: %d", this.port);
 
-		Server server = new Server(new InetSocketAddress("localhost", port));
+		Server server = new Server(new InetSocketAddress("0.0.0.0", port));
 
 		ServletContextHandler handler = new ServletContextHandler();
 		handler.setSessionHandler(new SessionHandler());
@@ -61,7 +61,7 @@ public class HttpServerDispatch
 			this.port = port;
 			return true;
 		}
-		catch(Exception e)
+		catch (Exception e)
 		{
 			logger.error("Could not start server on port {}", port, e);
 			this.port = 0;
@@ -86,7 +86,7 @@ public class HttpServerDispatch
 	 */
 	public synchronized void stop()
 	{
-		if(isStarted())
+		if (isStarted())
 		{
 			try
 			{
@@ -94,7 +94,7 @@ public class HttpServerDispatch
 
 				this.server = null;
 			}
-			catch(Exception e)
+			catch (Exception e)
 			{
 				logger.error("Error stopping HTTPServer on {}", port, e);
 			}
