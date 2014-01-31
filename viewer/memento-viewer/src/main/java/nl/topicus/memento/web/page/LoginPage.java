@@ -15,9 +15,11 @@ import org.apache.wicket.model.Model;
 public class LoginPage extends BasePage
 {
 
+	private static final long serialVersionUID = 1L;
+
 	public LoginPage()
 	{
-		Form<Void> form = new Form<>("form");
+		final Form<Void> form = new Form<>("form");
 
 		final IModel<String> nameModel = new Model<>();
 		final IModel<String> passwordModel = new Model<>();
@@ -30,16 +32,17 @@ public class LoginPage extends BasePage
 			private static final long serialVersionUID = 1L;
 
 			@Override
-			protected void onSubmit(AjaxRequestTarget target, Form<?> form)
+			protected void onSubmit(final AjaxRequestTarget target, final Form<?> form)
 			{
-				AuthenticationToken loginToken = new UsernamePasswordToken(nameModel.getObject(), passwordModel
+				final AuthenticationToken loginToken = new UsernamePasswordToken(nameModel.getObject(), passwordModel
 					.getObject());
 				try
 				{
 					SecurityUtils.getSubject().login(loginToken);
+					SecurityUtils.getSubject().getSession().setAttribute("username", nameModel.getObject());
 					setResponsePage(HomePage.class);
 				}
-				catch(AuthenticationException ae)
+				catch (final AuthenticationException ae)
 				{
 					error("Could not authenticate");
 					target.add(getFeedbackPanel());
@@ -47,7 +50,7 @@ public class LoginPage extends BasePage
 			}
 
 			@Override
-			protected void onError(AjaxRequestTarget target, Form<?> form)
+			protected void onError(final AjaxRequestTarget target, final Form<?> form)
 			{
 				target.add(getFeedbackPanel());
 			}
