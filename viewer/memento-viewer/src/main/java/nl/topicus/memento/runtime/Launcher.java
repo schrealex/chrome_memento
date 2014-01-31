@@ -13,13 +13,14 @@ public final class Launcher
 
 	public static void main(String[] args) throws Exception
 	{
+		Class.forName("org.sqlite.JDBC");
 		SynsereService service = new SynsereService();
 		Context context = new Context();
 		context.setArguments(new String[] { "-service_class=nl.topicus.memento.runtime.SiteApplication" });
 		service.init(context);
 		service.start();
 
-		synchronized("forever")
+		synchronized ("forever")
 		{
 			"forever".wait();
 		}
