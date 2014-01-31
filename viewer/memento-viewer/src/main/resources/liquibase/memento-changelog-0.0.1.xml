@@ -15,12 +15,12 @@
         		browsertype is browsertype zoals gegeven door plugin -->
         <sql>
         	CREATE TABLE video (
-        		id INTEGER PRIMARY KEY,
-        		filename TEXT,
-        		videoname TEXT,
-        		maplocation TEXT,
-        		length INTEGER,
-        		browsertype TEXT
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		filename TEXT NOT NULL UNIQUE,
+        		videoname TEXT NOT NULL,
+        		maplocation TEXT NOT NULL,
+        		length INTEGER NOT NULL,
+        		browsertype TEXT NOT NULL
         	);
         </sql>
     </changeSet>
@@ -34,10 +34,10 @@
         		url is url op gegeven tijd zoals gegeven door plugin -->
         <sql>
         	CREATE TABLE frame_metadata (
-        		id INTEGER PRIMARY KEY,
-        		fk_video_id INTEGER,
-        		start_datetime TEXT,
-        		url TEXT,
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		fk_video_id INTEGER NOT NULL,
+        		start_datetime TEXT NOT NULL,
+        		url TEXT NOT NULL,
         		FOREIGN KEY(fk_video_id) REFERENCES video(id)
         	);
         </sql>
@@ -53,11 +53,11 @@
         		comment is het commentaar van de plaatser -->
         <sql>
         	CREATE TABLE comment (
-        		id INTEGER PRIMARY KEY,
-        		fk_video_id INTEGER,
-        		datetime TEXT,
-        		username TEXT,
-        		comment TEXT,
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		fk_video_id INTEGER NOT NULL,
+        		datetime TEXT NOT NULL,
+        		username TEXT NOT NULL,
+        		comment TEXT NOT NULL,
         		FOREIGN KEY(fk_video_id) REFERENCES video(id)
         	);
         </sql>
