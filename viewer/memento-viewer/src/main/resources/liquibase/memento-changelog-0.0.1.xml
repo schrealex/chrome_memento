@@ -3,16 +3,66 @@
 	xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
 	xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-2.0.xsd
     http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
-	<changeSet id="1" author="michiel">
-        <comment>Begin aan tabelletje</comment>
-        <sql><![CDATA[
-            create table video (
-                id text not null
-            );
-        ]]>
-        </sql>
+	<changeSet id="1" author="kleverwal">
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="video" /></not>
+		</preConditions> 
+        <comment>Tabel video aanmaken</comment>
+        <createTable tableName="video">
+            <column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="filename" type="varchar(100)">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="maplocation" type="varchar(250)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="2" author="kleverwal">
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="metadata" /></not>
+		</preConditions> 
+        <comment>Tabel metadata aanmaken</comment>
+        <createTable tableName="metadata">
+        	<column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_video_id" type="int" />
+            <column name="start_datetime" type="datetime">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="length" type="int">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="browsertype" type="varchar(50)">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="url" type="varchar(100)">
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+    <changeSet id="3" author="kleverwal">
+		<preConditions onFail="MARK_RAN">
+			<not><tableExists tableName="comment" /></not>
+		</preConditions> 
+        <comment>Tabel comment aanmaken</comment>
+        <createTable tableName="comment">
+        	<column name="id" type="int">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="fk_video_id" type="int" />
+            <column name="datetime" type="datetime">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="username" type="varchar(50)">
+            	<constraints nullable="false"/>
+            </column>
+            <column name="comment" type="varchar(max)">
+            	<constraints nullable="false"/>
+            </column>
+        </createTable>
 	</changeSet>
-
-
-
 </databaseChangeLog>

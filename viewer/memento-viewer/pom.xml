@@ -249,7 +249,38 @@
             <version>${jetty.version}</version>
         </dependency>
 
-        <!-- Wicket -->
+		<!-- Wicket -->
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket</artifactId>
+			<version>${wicket.version}</version>
+			<type>pom</type>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-guice</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-shiro</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.wicketstuff</groupId>
+			<artifactId>wicketstuff-html5</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.wicket</groupId>
+			<artifactId>wicket-extensions</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.wicket-jquery-ui</groupId>
+			<artifactId>wicket-jquery-ui-core</artifactId>
+			<version>${wicket.version}</version>
+		</dependency>
         <dependency>
             <groupId>org.apache.wicket</groupId>
             <artifactId>wicket</artifactId>
@@ -377,18 +408,19 @@
         </dependency>
     </dependencies>
 
-    <profiles>
-        <profile>
-            <id>m2e</id>
-            <activation>
-                <property>
-                    <name>m2e.version</name>
-                </property>
-            </activation>
-            <properties>
-                <web.root>${basedir}/src/main/web</web.root>
-                <binaries.root>${basedir}/lib/binaries</binaries.root>
-                <storage.root>${basedir}/var</storage.root>
+	<profiles>
+		<profile>
+			<id>m2e</id>
+			<activation>
+				<property>
+					<name>m2e.version</name>
+				</property>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+			<properties>
+				<web.root>${basedir}/src/main/web</web.root>
+				<binaries.root>${basedir}/lib/binaries</binaries.root>
+				<storage.root>${basedir}/var</storage.root>
                 <datasets.root>${basedir}/etc/datasets/</datasets.root>
             </properties>
         </profile>

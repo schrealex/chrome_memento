@@ -1,10 +1,19 @@
-<!DOCTYPE html>
-<html xmlns:wicket="http://wicket.apache.org" lang="en">
 <wicket:extend>
-	<div class="page-header">
-		<h1>Memento Viewer</h1>
-		<p class="lead">Manage your Memento Movies</p>
-	</div>
-
+       <div class="page-header">
+             <h1>Memento Viewer</h1>
+             <p class="lead">Manage your Memento Movies here!</p>
+       </div>
+       <div class="files" wicket:id="files">FILES</div>
+       <div class="wrapper" id="wrapper">
+              <div class="meta" id="meta">
+                    <label wicket:id="metaData">META</label>
+                    <hr>
+              </div>
+              <div class="video">
+                    <video wicket:id="videoplayer"></video>
+              </div>
+       </div>
+       <div class="comments" id="comments" >
+             <label>COMMENTS</label>
+       </div>
 </wicket:extend>
-</html>
