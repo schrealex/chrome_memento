@@ -6,6 +6,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import nl.topicus.memento.videoservice.VideoService;
+import nl.topicus.memento.web.components.CommentForm;
 import nl.topicus.memento.web.components.FileTreeProvider;
 
 import org.apache.commons.lang.StringEscapeUtils;
@@ -26,6 +28,8 @@ import org.wicketstuff.html5.media.video.Html5Video;
 import org.wicketstuff.shiro.ShiroConstraint;
 import org.wicketstuff.shiro.annotation.ShiroSecurityConstraint;
 
+import com.google.inject.Inject;
+
 @ShiroSecurityConstraint(constraint = ShiroConstraint.IsAuthenticated)
 public class HomePage extends BasePage
 {
@@ -33,11 +37,43 @@ public class HomePage extends BasePage
 
 	private static final Logger LOG = LoggerFactory.getLogger(HomePage.class);
 
+	@Inject
+	private VideoService videoService;
+
 	public HomePage()
 	{
-		addFilesTree();
 		addMetaData();
-		add(new Html5Video("videoplayer", getMediaSourceList()));
+		addVideo();
+		addFilesTree();
+
+		final CommentForm commentForm = new CommentForm("commentForm");
+		add(commentForm);
+	}
+
+	public void addMetaData()
+	{
+		final StringBuilder metaBuilder = new StringBuilder();
+		metaBuilder.append("MetaData");
+
+		// final Label metaData = new Label("metaData", videofile.getMetaDataAsString());
+		final Label metaData = new Label("metaData", metaBuilder.toString());
+		add(metaData);
+	}
+
+	public void addVideo()
+	{
+		add(new Html5Video("videoplayer", getMediaSourceList())
+		{
+
+			private static final long serialVersionUID = 1L;
+
+			@Override
+			protected boolean isControls()
+			{
+				return true;
+			}
+
+		});
 	}
 
 	public void addFilesTree()
@@ -57,7 +93,7 @@ public class HomePage extends BasePage
 					@Override
 					protected IModel<?> newLabelModel(final IModel<File> model)
 					{
-						return Model.of(model.getObject().getName());
+						return Model.of(videoService.getVideoName(model.getObject().getName()));
 					}
 
 					@Override
@@ -126,16 +162,6 @@ public class HomePage extends BasePage
 		return mediaSourceList;
 	}
 
-	public void addMetaData()
-	{
-		final StringBuilder metaBuilder = new StringBuilder();
-		metaBuilder.append("MetaData");
-
-		// final Label metaData = new Label("metaData", videofile.getMetaDataAsString());
-		final Label metaData = new Label("metaData", metaBuilder.toString());
-		add(metaData);
-	}
-
 	private ITreeProvider<File> createTreeProvider()
 	{
 		return new FileTreeProvider(new AbstractReadOnlyModel<List<File>>()
@@ -145,7 +171,7 @@ public class HomePage extends BasePage
 			@Override
 			public List<File> getObject()
 			{
-				return Collections.singletonList(new File("var"));
+				return Collections.singletonList(videoService.getStorageFolder());
 			}
 		});
 	}
