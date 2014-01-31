@@ -8,61 +8,58 @@
 			<not><tableExists tableName="video" /></not>
 		</preConditions> 
         <comment>Tabel video aanmaken</comment>
-        <createTable tableName="video">
-            <column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="filename" type="varchar(100)">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="maplocation" type="varchar(250)">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
+        <!--	filename is naam zoals gegeven door plugin,
+        		videoname is naam gegeven door gebruiker,
+        		maplocation is pad naar bestand in lokale resources,
+        		length is videolengte in seconden,
+        		browsertype is browsertype zoals gegeven door plugin -->
+        <sql>
+        	CREATE TABLE video (
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		filename TEXT NOT NULL UNIQUE,
+        		videoname TEXT NOT NULL,
+        		maplocation TEXT NOT NULL,
+        		length INTEGER NOT NULL,
+        		browsertype TEXT NOT NULL
+        	);
+        </sql>
     </changeSet>
     <changeSet id="2" author="kleverwal">
 		<preConditions onFail="MARK_RAN">
-			<not><tableExists tableName="metadata" /></not>
+			<not><tableExists tableName="frame_metadata" /></not>
 		</preConditions> 
-        <comment>Tabel metadata aanmaken</comment>
-        <createTable tableName="metadata">
-        	<column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="fk_video_id" type="int" />
-            <column name="start_datetime" type="datetime">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="length" type="int">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="browsertype" type="varchar(50)">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="url" type="varchar(100)">
-            	<constraints nullable="false"/>
-            </column>
-        </createTable>
+        <comment>Tabel frame_metadata aanmaken</comment>
+        <!--	fk_video_id verwijst naar id in video tabel,
+        		start_datetime is starttijd zoals gegeven door plugin,
+        		url is url op gegeven tijd zoals gegeven door plugin -->
+        <sql>
+        	CREATE TABLE frame_metadata (
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		fk_video_id INTEGER NOT NULL,
+        		start_datetime TEXT NOT NULL,
+        		url TEXT NOT NULL,
+        		FOREIGN KEY(fk_video_id) REFERENCES video(id)
+        	);
+        </sql>
     </changeSet>
     <changeSet id="3" author="kleverwal">
 		<preConditions onFail="MARK_RAN">
 			<not><tableExists tableName="comment" /></not>
 		</preConditions> 
         <comment>Tabel comment aanmaken</comment>
-        <createTable tableName="comment">
-        	<column name="id" type="int">
-                <constraints primaryKey="true" nullable="false"/>
-            </column>
-            <column name="fk_video_id" type="int" />
-            <column name="datetime" type="datetime">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="username" type="varchar(50)">
-            	<constraints nullable="false"/>
-            </column>
-            <column name="comment" type="varchar(max)">
-            	<constraints nullable="false"/>
-            </column>
-        </createTable>
+        <!--	fk_video_id verwijst naar id in video tabel,
+        		datetime is datum/tijd dat comment geplaatst is,
+        		username is naam van plaatser,
+        		comment is het commentaar van de plaatser -->
+        <sql>
+        	CREATE TABLE comment (
+        		id INTEGER PRIMARY KEY NOT NULL,
+        		fk_video_id INTEGER NOT NULL,
+        		datetime TEXT NOT NULL,
+        		username TEXT NOT NULL,
+        		comment TEXT NOT NULL,
+        		FOREIGN KEY(fk_video_id) REFERENCES video(id)
+        	);
+        </sql>
 	</changeSet>
 </databaseChangeLog>
