@@ -1,6 +1,49 @@
 (function()
 {
+  var isObject = function(object)
+  {
+    return typeof object === "object";
+  };
 
+  var postVideo = function(blob)
+  {
+    console.log('posting video...');
+    var deferred = Q.defer();
+    console.log('posting video');
+    var http = new XMLHttpRequest();
+				
+    var postUrl = "http://172.25.66.185:9222/api/game";
+
+				
+    var form = new FormData();
+    var request = new XMLHttpRequest();
+
+    form.append("file", blob, "video.webM");
+				
+    request.open("POST", postUrl, true);				
+    request.setRequestHeader('Access-Control-Allow-Origin', 'value');
+    request.setRequestHeader('X-Custom-Header', 'value');
+				
+    request.send(form);
+				
+    http.onreadystatechange = function() {
+      console.log('finished uploading');
+      //  && http.status == 200
+      if(http.readyState == 4) {
+        deferred.resolve(true);
+        alert(http.responseText);
+      }
+    }
+    
+    return deferred.promise;
+				/* http.open("POST", postUrl, true);
+
+				//Send the proper header information along with the request
+				http.setRequestHeader("Content-type", "application/x-www-form-urlencoded"); */
+
+
+  };
+  
   var eventualSegment = function(id)
   {
     var deferred = Q.defer();
@@ -33,14 +76,64 @@
 
     return deferred.promise;
   }
+  
+  /*
+   * Fetch dimension
+   */
+  var eventualDimension = function()
+  {
+    var deferred = Q.defer();
+    
+    chrome.runtime.sendMessage(null, {type : 'size'}, function(response)
+    {
+       deferred.resolve(response);
+    });
+    
+    return deferred.promise;
+  }
+  
+  var eventualSegments = function()
+  {
+    var deferred = Q.defer();
+    
+    chrome.runtime.sendMessage(null, {type : 'segments'}, function(message)
+    {
+      if(!isObject(message))
+      {
+        deferred.reject(new Error("No segments received"));
+        return;
+      }
+      else
+      {
+        deferred.resolve(message.segments);
+      }
+    });
+    
+    return deferred.promise;
+  };
+  
+  var fetch = function(id)
+  {
+    var deferred = Q.defer();
 
+    chrome.runtime.sendMessage(null, {type : 'fetch', segmentId : id}, function(response)
+    {
+      deferred.resolve(response);
+    });
+    
+    return deferred.promise;
+  };
 
+  /*
+   * Fetch segment
+   */
+  
   var range = null;
   var segments = [];
   var buf = [];
   var ix = 0;
 
-  var eventualImage = function(data)
+  var eventualImage = function(frame)
   {
     var deferred = Q.defer();
 
@@ -48,10 +141,12 @@
 
     image.onload = function()
     {
-      deferred.resolve(image);
+      frame.raw = image;
+
+      deferred.resolve(frame);
     }
 
-    image.src = data;
+    image.src = frame.data;
 
     return deferred.promise;
   }
@@ -153,34 +248,153 @@
     repaint();
   });
 
-  chrome.runtime.sendMessage(null, 'lock', function(message)
+  chrome.runtime.connect({});
+  
+  var rendered = 0;
+  
+  eventualDimension().then(function(dimension) {
+    eventualSegments().then(function(segments)
+    {
+      var segmentCount = segments.length + 1;
+      console.log(segments);
+
+      eventualCanvas().then(function(canvas)
+      {
+        canvas.width = dimension.width;
+        canvas.height = dimension.height;
+        
+        var video = new Whammy.Video(10);
+        
+        // fetch segments
+        
+        var renderFrames = function(frames)
+        {
+
+          var addFrame = function(data)
+          {
+            var image = data.raw;
+
+            // center image, draw mouse, etc?
+            canvas.getContext('2d').drawImage(image, 0, 0);
+            video.add(canvas);
+            
+            //
+            rendered++;
+            
+            var status = document.getElementById('status');
+            //console.log(status);
+            status.innerHTML = 'rendering ' + ~~(100 * (rendered/ (segmentCount * 25))) + '%';
+            
+  
+            if (frames.length === 0) {
+              if (segments.length > 0) {
+                var segmentId = segments.shift();
+            
+                fetch(segmentId).then(renderFrames).done();
+              }
+              else
+              {
+                status.innerHTML = 'compiling';
+                // done!
+                var output = video.compile();
+              
+                var url = webkitURL.createObjectURL(output);
+                document.getElementById('awesome').src = url;
+                status.innerHTML = 'done';
+                postVideo(output).done();
+              }
+              return;
+            }
+            
+            var frame = frames.shift();
+
+            eventualImage(frame).then(addFrame).done();
+          }
+          
+          if (frames.length === 0) {
+            return;
+          }
+  
+          var frame = frames.shift();
+          
+          eventualImage(frame).then(addFrame).done();
+        };
+        
+        var segmentId = segments.shift();
+
+        fetch(segmentId).then(renderFrames).done();
+
+      }).done();
+    
+    return;
+            
+      chrome.runtime.sendMessage(null, {type : 'fetch', segmentId : segments[0]}, function(response)
+      {
+        eventualCanvas().then(function(canvas)
+        {
+          console.log('hello!', response);
+          var video = new Whammy.Video(10);
+          
+         
+          
+          return;
+          
+          console.log(response);
+          for(var i = 0; i < response.length; i++)
+          {
+            console.log(response[i]);
+          }
+          eventualImage(response[0].data).then(function(image)
+          {
+            canvas.getContext('2d').drawImage(image, 0, 0);
+            video.add(canvas);
+            var output = video.compile();
+            postVideo(output).done();
+            console.log(output);
+            var url = webkitURL.createObjectURL(output);
+  
+            try {
+              console.log(canvas.toDataURL("image/webp"));
+            } catch(e) {
+              console.log(e);
+            }
+  
+          });
+        }).done();
+        console.log('fetched response', response);
+      });
+  
+      return;
+    
+    
+    
+      eventualSegment(popupSegments[0]).then(function(segment)
+      {
+        console.log(segment);
+        buf = segment;
+        ix = 0;
+        repaint();
+      });
+  /*    chrome.storage.local.get(key, function(data)
+      {
+        console.log('got',data);
+  //      buf = data[key];
+  //      ix = 0;
+  //      repaint();
+      });*/                     
+    });
+  });
+  
+  return;
+  // init
+  chrome.runtime.sendMessage(null, {type : 'segments'}, function(message)
   {
-    if(typeof message != 'object)
+    if(!isObject(message))
     {
       return;
     }
 
-    var type = message.type;
 
-    if(type == 'range')
-    {
-      range = message.range;
-    }
-
-    eventualSegment(popupSegments[0]).then(function(segment)
-    {
-      console.log(segment);
-      buf = segment;
-      ix = 0;
-      repaint();
-    });
-/*    chrome.storage.local.get(key, function(data)
-    {
-      console.log('got',data);
-//      buf = data[key];
-//      ix = 0;
-//      repaint();
-    });*/
   });
 
 })();
