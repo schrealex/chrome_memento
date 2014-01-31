@@ -12,7 +12,7 @@
   var extensionId = chrome.i18n.getMessage("@@extension_id");
 
   // 220MiB top (write first, remove later, 3 bufs of 25 frames (~75 frames =~= 8s)
-  var bufSize = 600;
+  var bufSize = 200;
   var shortBufSize = 25;
 
   var segments = [];

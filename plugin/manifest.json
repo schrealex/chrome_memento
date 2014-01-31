@@ -1,6 +1,6 @@
 {
   "name": "Chrome Memento",
-  "description" : "Five minute recordings for error analysis",
+  "description" : "20 second recordings for error analysis",
   "version": "1.0",
   "background": {
     "scripts": ["q.js", "background.js"],
@@ -8,7 +8,11 @@
   },
   "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
   "browser_action" : {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": {                    // optional
+      "19": "icon-19.png",           // optional
+      "38": "icon-38.png"            // optional
+    }
   },
   "manifest_version": 2,
   "web_accessible_resources": [
@@ -20,5 +24,12 @@
   "content_scripts": [{
     "matches": ["http://*/*", "https://*/*"],
     "js": ["content.js"]
-  }]
+  }],
+  "icons": {
+    "16": "icon-16.png",
+    "48": "icon-48.png",
+    "128": "icon-128.png"
+  }
+
+
 }

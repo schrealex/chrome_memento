@@ -1,38 +1,58 @@
+.container {
+	height: 500px !important;
+}
+
+.logo {
+	float: left;
+	padding: 20px;
+}
+
+.header .text {
+	float: left;
+	position: relative;
+	font-size: 40px;
+	top: 110px;
+}
+
 .files {
- 	width: 280px; 
- 	height: 500px; 
- 	padding: 20px;
- 	float: left;
- 	border-top: 1px solid #eeeeee;
- 	border-left: 1px solid #eeeeee;
- }
- 
- .wrapper {
- 	width: 600px; 
- 	height: 100%; 
- 	padding: 20px;
- 	float: left;
- 	border-top: 1px solid #eeeeee;
- 	border-right: 1px solid #eeeeee;
- }
+	width: 280px;
+	height: 500px;
+	padding: 20px;
+	clear: both;
+	float: left;
+	border-top: 1px solid #eeeeee;
+	border-left: 1px solid #eeeeee;
+}
 
- .meta { 
- 	height: 20%; 
- }
+.wrapper {
+	width: 808px;
+	height: 700px;
+	padding: 20px;
+	float: left;
+	border-top: 1px solid #eeeeee;
+	border-right: 1px solid #eeeeee;
+}
 
-.video{
-	height: 80%; 
+.meta {
+	height: 60px;
+	padding: 5px 20px;
+	border-top: 1px solid #eeeeee;
+	border-left: 1px solid #eeeeee;
+}
+
+.video {
+	height: 400px;
+	margin-top: 20px;
 }
 
 .comments {
- 	width: 390px;
- 	height: 500px;
- 	padding: 20px;
- 	float: left;
- }
- 
- .comment {
- 	
- }
- 
- 
+	width: 390px;
+	height: 500px;
+	padding: 20px;
+	float: left;
+}
+
+.comment {
+	width: 586px;
+	height: 60px;
+}
